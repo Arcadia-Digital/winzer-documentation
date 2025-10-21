@@ -38,11 +38,16 @@ A web-based tool for validating CSV files before uploading to the Winzer Middlew
 - ❌ **Missing Required Fields**: Empty required fields (ID, PRIMARY_ITEM_NUMBER, etc.)
 - ❌ **Orphaned Variants**: Variants without valid parent products in the same file
 - ❌ **Parent Product Missing Options**: Parent products without option names for variants
+- ❌ **Missing SKU**: Variants without PRIMARY_ITEM_NUMBER (SKU)
 
 ### **Warnings** (Should Review)
 - ⚠️ **Empty Columns**: Extra empty columns at end of file
 - ⚠️ **Invalid Numeric Values**: Non-numeric data in numeric fields
 - ⚠️ **Invalid Boolean Values**: Non-boolean data in boolean fields
+- ⚠️ **Invalid Weight Units**: Invalid weight unit values
+- ⚠️ **Missing Weight Unit**: Weight specified without unit
+- ⚠️ **Missing Weight Value**: Weight unit specified without value
+- ⚠️ **Option Value Without Name**: Option values without corresponding option names
 - ⚠️ **Invalid Image URLs**: Malformed or inaccessible image links
 - ⚠️ **Empty Parent IDs**: Variants with empty parent product IDs
 - ⚠️ **Empty Parent Description**: Parent products without descriptions

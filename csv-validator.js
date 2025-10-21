@@ -231,6 +231,9 @@ class CSVValidator {
         // Check for parent products with missing required variant data
         if (!row.PARENT_PRODUCT_ID || row.PARENT_PRODUCT_ID.trim() === '') {
             this.validateParentProduct(row, rowNumber);
+        } else {
+            // This is a variant - check for GraphQL field issues
+            this.validateVariantFields(row, rowNumber);
         }
     }
 
@@ -269,6 +272,16 @@ class CSVValidator {
                 }
             }
         });
+
+        // Validate weight unit format
+        if (row.WEIGHT_UNIT && row.WEIGHT_UNIT.trim() !== '') {
+            const validUnits = ['LB', 'LBS', 'OZ', 'KG', 'G', 'POUNDS', 'OUNCES', 'KILOGRAMS', 'GRAMS'];
+            const unit = row.WEIGHT_UNIT.toUpperCase();
+            if (!validUnits.includes(unit)) {
+                this.addIssue('warning', 'Invalid Weight Unit', 
+                    `Row ${rowNumber}: Weight unit "${row.WEIGHT_UNIT}" is not valid. Use: ${validUnits.join(', ')}.`, rowNumber);
+            }
+        }
     }
 
     async validateImageURLs(row, rowNumber) {
@@ -302,6 +315,48 @@ class CSVValidator {
         if (!row.PRODUCT_DESCRIPTION || row.PRODUCT_DESCRIPTION.trim() === '') {
             this.addIssue('warning', 'Empty Parent Description', 
                 `Row ${rowNumber}: Parent product "${row.ID}" has no description. This may cause issues during creation.`, rowNumber);
+        }
+    }
+
+    validateVariantFields(row, rowNumber) {
+        // Check for required variant fields that cause GraphQL errors
+        if (!row.PRIMARY_ITEM_NUMBER || row.PRIMARY_ITEM_NUMBER.trim() === '') {
+            this.addIssue('critical', 'Missing SKU', 
+                `Row ${rowNumber}: Variant is missing PRIMARY_ITEM_NUMBER (SKU). This is required for variant creation.`, rowNumber);
+        }
+
+        // Check for weight data consistency
+        const hasWeight = row.WEIGHT && row.WEIGHT.trim() !== '';
+        const hasWeightUnit = row.WEIGHT_UNIT && row.WEIGHT_UNIT.trim() !== '';
+        
+        if (hasWeight && !hasWeightUnit) {
+            this.addIssue('warning', 'Missing Weight Unit', 
+                `Row ${rowNumber}: Weight is specified but no weight unit provided.`, rowNumber);
+        }
+        
+        if (!hasWeight && hasWeightUnit) {
+            this.addIssue('warning', 'Missing Weight Value', 
+                `Row ${rowNumber}: Weight unit is specified but no weight value provided.`, rowNumber);
+        }
+
+        // Check for option values that don't match parent options
+        const hasOption1 = row.OPTION1_VALUE && row.OPTION1_VALUE.trim() !== '';
+        const hasOption2 = row.OPTION2_VALUE && row.OPTION2_VALUE.trim() !== '';
+        const hasOption3 = row.OPTION3_VALUE && row.OPTION3_VALUE.trim() !== '';
+        
+        if (hasOption1 && (!row.OPTION1_NAME || row.OPTION1_NAME.trim() === '')) {
+            this.addIssue('warning', 'Option Value Without Name', 
+                `Row ${rowNumber}: Has OPTION1_VALUE but no OPTION1_NAME. This may cause variant creation issues.`, rowNumber);
+        }
+        
+        if (hasOption2 && (!row.OPTION2_NAME || row.OPTION2_NAME.trim() === '')) {
+            this.addIssue('warning', 'Option Value Without Name', 
+                `Row ${rowNumber}: Has OPTION2_VALUE but no OPTION2_NAME. This may cause variant creation issues.`, rowNumber);
+        }
+        
+        if (hasOption3 && (!row.OPTION3_NAME || row.OPTION3_NAME.trim() === '')) {
+            this.addIssue('warning', 'Option Value Without Name', 
+                `Row ${rowNumber}: Has OPTION3_VALUE but no OPTION3_NAME. This may cause variant creation issues.`, rowNumber);
         }
     }
 

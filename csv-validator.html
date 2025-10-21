@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Winzer CSV Validator - Arcadia Digital</title>
+    <link rel="icon" type="image/webp" href="assets/favicon.webp">
+    <link rel="stylesheet" href="arcadia-style.css">
+    <style>
+        .validator-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .drop-zone {
+            border: 3px dashed #2d5a27;
+            border-radius: 12px;
+            padding: 3rem;
+            text-align: center;
+            background: #f8f9fa;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .drop-zone:hover {
+            border-color: #1e3d1a;
+            background: #f0f2f0;
+        }
+        
+        .drop-zone.dragover {
+            border-color: #1e3d1a;
+            background: #e8f5e8;
+            transform: scale(1.02);
+        }
+        
+        .results-panel {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            border-radius: 8px;
+            display: none;
+        }
+        
+        .results-success {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+        
+        .results-warning {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            color: #856404;
+        }
+        
+        .results-error {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+        
+        .issue-list {
+            list-style: none;
+            padding: 0;
+            margin: 1rem 0;
+        }
+        
+        .issue-item {
+            padding: 0.75rem;
+            margin: 0.5rem 0;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .issue-critical {
+            background: #f8d7da;
+            border-left: 4px solid #dc3545;
+        }
+        
+        .issue-warning {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+        }
+        
+        .issue-info {
+            background: #d1ecf1;
+            border-left: 4px solid #17a2b8;
+        }
+        
+        .issue-icon {
+            margin-right: 0.75rem;
+            font-size: 1.2rem;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 1rem;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #2d5a27;
+        }
+        
+        .action-buttons {
+            margin-top: 1.5rem;
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary {
+            background: #2d5a27;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #1e3d1a;
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background: #545b62;
+        }
+        
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background: #1e7e34;
+        }
+        
+        .file-info {
+            background: #e9ecef;
+            padding: 1rem;
+            border-radius: 6px;
+            margin: 1rem 0;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e9ecef;
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 1rem 0;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: #2d5a27;
+            transition: width 0.3s ease;
+        }
+        
+        .help-section {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-top: 2rem;
+        }
+        
+        .help-section h3 {
+            color: #2d5a27;
+            margin-top: 0;
+        }
+        
+        .help-list {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .help-list li {
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #dee2e6;
+        }
+        
+        .help-list li:last-child {
+            border-bottom: none;
+        }
+        
+        .help-list li::before {
+            content: "✓";
+            color: #28a745;
+            font-weight: bold;
+            margin-right: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="validator-container">
+        <header>
+            <h1>Winzer CSV Validator</h1>
+            <p class="lead">Validate your product CSV files before uploading to the Winzer Middleware</p>
+        </header>
+
+        <div class="drop-zone" id="dropZone">
+            <div>
+                <h3>📁 Drag & Drop Your CSV File Here</h3>
+                <p>or <button type="button" class="btn btn-secondary" onclick="document.getElementById('fileInput').click()">Browse Files</button></p>
+                <p class="text-muted">Supports .csv files up to 10MB</p>
+            </div>
+            <input type="file" id="fileInput" accept=".csv" style="display: none;">
+        </div>
+
+        <div class="file-info" id="fileInfo" style="display: none;">
+            <h4>File Information</h4>
+            <div id="fileDetails"></div>
+        </div>
+
+        <div class="progress-bar" id="progressBar" style="display: none;">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+
+        <div class="results-panel" id="resultsPanel">
+            <h3 id="resultsTitle">Validation Results</h3>
+            <div class="stats-grid" id="statsGrid"></div>
+            <div id="issuesList"></div>
+            <div class="action-buttons" id="actionButtons"></div>
+        </div>
+
+        <div class="help-section">
+            <h3>What This Tool Checks</h3>
+            <ul class="help-list">
+                <li><strong>File Format:</strong> Ensures proper CSV structure and column count</li>
+                <li><strong>Data Quality:</strong> Detects SQL injection attempts and malformed data</li>
+                <li><strong>ID Validation:</strong> Checks for scientific notation in ID fields</li>
+                <li><strong>Parent-Child Relationships:</strong> Verifies variant products have valid parents</li>
+                <li><strong>Orphaned Variants:</strong> Detects variants without parent products in the same file</li>
+                <li><strong>Parent Product Options:</strong> Ensures parent products have option names for variants</li>
+                <li><strong>Required Fields:</strong> Ensures all mandatory fields are populated</li>
+                <li><strong>Image URLs:</strong> Validates image links are accessible</li>
+                <li><strong>Data Types:</strong> Checks numeric fields, dates, and other data formats</li>
+                <li><strong>Shopify Compatibility:</strong> Ensures data meets Shopify's requirements</li>
+            </ul>
+        </div>
+    </div>
+
+    <script src="csv-validator.js"></script>
+</body>
+</html>

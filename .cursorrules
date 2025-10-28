@@ -4,6 +4,8 @@
 
 You are working on the **Winzer eCommerce Platform** - a complex multi-brand Shopify Plus solution with custom middleware, SearchSpring integration, and multi-region support.
 
+**CRITICAL**: Before starting, read `AI_ONBOARDING_CONTEXT.md` for project history, recent investigations, current priorities, and technical context.
+
 **Key Technologies:**
 - Shopify Plus (Liquid templates)
 - C# .NET 6 (Middlewares, AWS Lambda, ECS)

@@ -20,7 +20,8 @@ cd winzer-documentation
 ### 3. Configure Cursor Settings
 - Open Cursor Settings (Cmd/Ctrl + ,)
 - Navigate to "Cursor" → "Rules for AI"
-- Copy the contents of `.cursorrules` (created below) into the field
+- Copy the contents of `.cursorrules` into the field
+- **Important**: The AI will automatically reference `AI_ONBOARDING_CONTEXT.md` for project history
 - Apply the rules
 
 ### 4. Open Project in Cursor

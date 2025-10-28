@@ -1,0 +1,209 @@
+# Cursor Rules for Winzer Project
+
+## 🏷️ Project Context
+
+You are working on the **Winzer eCommerce Platform** - a complex multi-brand Shopify Plus solution with custom middleware, SearchSpring integration, and multi-region support.
+
+**Key Technologies:**
+- Shopify Plus (Liquid templates)
+- C# .NET 6 (Middlewares, AWS Lambda, ECS)
+- JavaScript/React (SearchSpring app)
+- PostgreSQL (Data storage)
+- AWS Infrastructure
+
+---
+
+## 🎯 Core Principles
+
+### Technical Excellence
+- Write clean, maintainable code with proper error handling
+- Follow existing patterns in the codebase
+- Add comments for complex logic
+- Consider scalability and performance implications
+
+### Data Quality First
+- Always validate input data before processing
+- Handle edge cases gracefully
+- Provide clear error messages for debugging
+- Log important operations for troubleshooting
+
+### Client Success
+- Build tools that non-technical users can operate
+- Create clear documentation for handoff
+- Design for reliability over speed
+- Prioritize preventing errors over catching them
+
+---
+
+## 🛠️ Development Workflow
+
+### When Adding Features
+1. Search codebase for similar implementations
+2. Follow existing patterns and conventions
+3. Add appropriate error handling
+4. Update documentation if behavior changes
+5. Test with real data from investigations folder
+
+### When Fixing Bugs
+1. Examine investigation files in `/investigations` for context
+2. Reproduce issue with actual data
+3. Identify root cause (not just symptoms)
+4. Test fix with multiple scenarios
+5. Document solution in relevant docs
+
+### When Refactoring
+1. Ensure existing functionality is preserved
+2. Update all affected files consistently
+3. Maintain backward compatibility where possible
+4. Update tests and documentation
+
+---
+
+## 📁 Project Structure Context
+
+**Documentation**: Root directory + HTML files
+- Main docs: `winzer-documentation.html`, `index.html`
+- Tool pages: `csv-validator.html`, `video-demos.html`
+- Markdown source files for each major component
+
+**Code**: `/code/winzer-main` and `/code/winzer-middleware`
+- Middleware: C# .NET 6 project (src/Winzer.*)
+- Main theme: Shopify Liquid files (dawn theme)
+- SearchSpring: React app (searchspring/winzer/)
+
+**Investigations**: `/investigations/*` folders
+- Contains real-world error logs and test data
+- Use these to understand actual failure patterns
+- Reference specific investigations when debugging
+
+---
+
+## 🎨 Code Style Guidelines
+
+### C#
+- Use meaningful variable names
+- Add XML comments for public methods
+- Handle exceptions explicitly
+- Log errors with context
+- Use async/await for I/O operations
+
+### JavaScript
+- Use modern ES6+ syntax
+- Add JSDoc comments for functions
+- Handle errors gracefully
+- Use meaningful function names
+- Follow existing code organization
+
+### HTML/Liquid
+- Use semantic HTML
+- Follow Shopify Liquid conventions
+- Maintain accessibility standards
+- Keep template code readable
+
+---
+
+## 🔍 Common Issues & Patterns
+
+### CSV Validation
+- **Scientific notation IDs** (1E+14) → Convert to numeric
+- **SQL injection attempts** → Sanitize or reject
+- **Orphaned variants** → Ensure parent exists
+- **Missing options** → Parent products need option names
+- **Variant field issues** → Check SKU, weight, options
+
+### Middleware Errors
+- "Unknown field" → Check GraphQL field mapping
+- **Database timeouts** → Large datasets, reduce batch size
+- **Variant creation failures** → Check field structure
+- **Parent creation failures** → Verify option names exist
+
+### GraphQL
+- Field names must match schema exactly
+- Handle null values properly
+- Use correct data types
+- Respect Shopify's field requirements
+
+---
+
+## 📊 Investigation File Pattern
+
+Investigations follow this naming: `/investigations/DDMMMYYYY-N/`
+- Date formatted folders for organization
+- Contains `*.csv` files (test data) and `*.txt` files (error logs)
+- Use these to understand real-world failure patterns
+
+---
+
+## 🎯 AI Assistant Behavior
+
+### Be Pragmatic
+- Provide working code, not just guidance
+- Explain "why" not just "what"
+- Suggest concrete improvements
+- Anticipate follow-up needs
+
+### Be Thorough
+- Search codebase before suggesting changes
+- Reference existing patterns
+- Consider edge cases
+- Think about downstream impacts
+
+### Be Helpful
+- Break down complex tasks
+- Provide step-by-step guidance
+- Explain technical concepts clearly
+- Link to relevant documentation
+
+---
+
+## 🚨 Critical Concerns
+
+### Data Security
+- Never log sensitive data
+- Sanitize user inputs
+- Validate all external data sources
+- Follow Shopify API security best practices
+
+### Error Handling
+- Always provide meaningful error messages
+- Log sufficient context for debugging
+- Don't swallow exceptions silently
+- Consider retry logic for transient failures
+
+### Performance
+- Consider impact of large datasets
+- Optimize database queries
+- Cache data where appropriate
+- Monitor timeout thresholds
+
+---
+
+## 📝 When Creating Documentation
+
+- Write for non-technical users when possible
+- Include practical examples
+- Provide troubleshooting steps
+- Keep it concise but complete
+- Update when code changes
+
+---
+
+## 🎓 Learning Path
+
+### New Team Members
+1. Start with `README.md` for project overview
+2. Review `DEVELOPER_HANDOFF.md` for architecture
+3. Explore investigation files to understand issues
+4. Try simple tasks with CSV validator
+5. Progress to middleware development
+
+### Experienced Developers
+1. Review existing patterns in each technology stack
+2. Understand error handling approaches
+3. Familiarize with investigation files
+4. Start with bug fixes before new features
+
+---
+
+**Remember**: The goal is to build reliable, maintainable solutions that non-technical users can operate successfully.
+

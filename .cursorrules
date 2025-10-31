@@ -4,7 +4,10 @@
 
 You are working on the **Winzer eCommerce Platform** - a complex multi-brand Shopify Plus solution with custom middleware, SearchSpring integration, and multi-region support.
 
-**CRITICAL**: Before starting, read `AI_ONBOARDING_CONTEXT.md` for project history, recent investigations, current priorities, and technical context.
+**CRITICAL**: Before starting, read:
+- `HANDOFF.md` - Quick start guide and runbooks for new maintainers
+- `AI_ONBOARDING_CONTEXT.md` - Project history, recent investigations, current priorities, and technical context
+- `DATA_GUIDE.md` - How to safely use investigation files and sample data
 
 **Key Technologies:**
 - Shopify Plus (Liquid templates)
@@ -65,8 +68,9 @@ You are working on the **Winzer eCommerce Platform** - a complex multi-brand Sho
 
 **Documentation**: Root directory + HTML files
 - Main docs: `winzer-documentation.html`, `index.html`
-- Tool pages: `csv-validator.html`, `video-demos.html`
+- Tool pages: `video-demos.html`
 - Markdown source files for each major component
+- Handoff docs: `HANDOFF.md`, `DATA_GUIDE.md`, `RELEASE_NOTES.md`
 
 **Code**: `/code/winzer-main` and `/code/winzer-middleware`
 - Middleware: C# .NET 6 project (src/Winzer.*)
@@ -106,12 +110,13 @@ You are working on the **Winzer eCommerce Platform** - a complex multi-brand Sho
 
 ## 🔍 Common Issues & Patterns
 
-### CSV Validation
+### CSV Data Quality Issues
 - **Scientific notation IDs** (1E+14) → Convert to numeric
 - **SQL injection attempts** → Sanitize or reject
 - **Orphaned variants** → Ensure parent exists
 - **Missing options** → Parent products need option names
 - **Variant field issues** → Check SKU, weight, options
+- See `investigations/*` folders and `DATA_GUIDE.md` for real-world examples
 
 ### Middleware Errors
 - "Unknown field" → Check GraphQL field mapping
@@ -193,10 +198,10 @@ Investigations follow this naming: `/investigations/DDMMMYYYY-N/`
 ## 🎓 Learning Path
 
 ### New Team Members
-1. Start with `README.md` for project overview
+1. Start with `HANDOFF.md` for quick start and runbooks
 2. Review `DEVELOPER_HANDOFF.md` for architecture
-3. Explore investigation files to understand issues
-4. Try simple tasks with CSV validator
+3. Read `DATA_GUIDE.md` for using investigation files
+4. Explore investigation files to understand issues
 5. Progress to middleware development
 
 ### Experienced Developers

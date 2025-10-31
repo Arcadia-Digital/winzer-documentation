@@ -55,20 +55,8 @@ Client experiencing "unknown field" errors when uploading product CSVs to Winzer
 
 ## 🛠️ Solutions Implemented
 
-### CSV Validator Tool
-**Location**: `csv-validator.html` + `csv-validator.js`
-
-**Purpose**: Web-based validation tool to catch CSV issues before upload
-
-**Key Validations**:
-- Scientific notation ID detection
-- SQL injection detection
-- Parent-child relationship validation
-- Option name validation
-- Weight data consistency checks
-- Image URL validation
-
-**Status**: ✅ Deployed and integrated into main documentation site
+### CSV Validator Tool (Deprecated)
+**Status**: Deprecated and removed from this repository during handoff. Investigation files and documentation remain for historical context.
 
 ---
 
@@ -89,8 +77,7 @@ Client experiencing "unknown field" errors when uploading product CSVs to Winzer
 - Pattern: CSV file + AWS error log (.txt) in each folder
 
 ### Tools
-- `csv-validator.html`: Main validation tool
-- `CSV-VALIDATOR-README.md`: User documentation
+- Internal documentation and investigation datasets (see `investigations/*`)
 
 ---
 
@@ -235,7 +222,7 @@ if (result.IsSuccessful()) {
 ## 🔗 Critical Files Reference
 
 ### Must-Read for Context
-- `csv-validator.js` - Validation logic and patterns
+  (CSV validator removed in handoff; see investigations and docs instead)
 - `ProductFeedService.cs` - Main CSV processing
 - Investigation files - Real-world failure data
 - `schema.graphql` - GraphQL schema reference
@@ -243,7 +230,6 @@ if (result.IsSuccessful()) {
 ### Key URLs in Project
 - GitHub Repo: winzer-documentation
 - Main Docs: index.html
-- CSV Validator: csv-validator.html
 - Investigation Examples: investigations/21OCT2025-4/
 
 ---
@@ -269,12 +255,12 @@ if (result.IsSuccessful()) {
 
 ### "Help debug a CSV upload failure"
 1. Check investigation files for similar patterns
-2. Validate CSV with csv-validator
+2. Validate CSV structure against documented requirements
 3. Review error logs for specifics
 4. Suggest targeted fix
 
 ### "Add a new validation check"
-1. Review existing validations in csv-validator.js
+1. Review existing data handling and documented requirements
 2. Follow the pattern
 3. Add appropriate error messages
 4. Update documentation
@@ -288,4 +274,12 @@ if (result.IsSuccessful()) {
 ---
 
 **Remember**: You're helping build a system that non-technical users must operate successfully. Prioritize clarity, reliability, and usability over clever technical solutions.
+
+---
+
+## ✅ What's Next for Client Team
+
+- Focus on middleware GraphQL field mapping fixes for variant creation
+- Add batching/backoff to mitigate DB timeouts on large uploads
+- Continue codifying failure patterns from `investigations/*` into process docs
 

@@ -1,0 +1,24 @@
+name: Docs Check
+
+on:
+    push:
+        branches: [main]
+    pull_request:
+        branches: [main]
+
+jobs:
+    lint-and-links:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
+
+            - name: Lint JS (docs only)
+              run: npx --yes eslint --ext .js . || true
+
+            - name: Link Checker (Lychee)
+              uses: lycheeverse/lychee-action@v1
+              with:
+                  args: --verbose --no-progress --exclude-mail --accept 200,206,429 "**/*.html" "**/*.md"
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

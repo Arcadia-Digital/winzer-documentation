@@ -46,11 +46,11 @@ cd winzer-documentation
 
 ## 📋 Your First Task Workflow
 
-**Example**: "Add a new validation check to CSV validator"
+**Example**: "Update documentation navigation"
 
-1. **Open relevant file**: `csv-validator.js`
+1. **Open relevant file**: `index.html`
 2. **Use Cmd/Ctrl + L** to open chat
-3. **Ask**: "I need to add a check for [specific issue]. Where should I add it and what would the code look like?"
+3. **Ask**: "Suggest a minimal edit to improve link grouping without changing visual design."
 4. **Review suggestions** and apply if suitable
 5. **Use Cmd/Ctrl + K** on specific code blocks to refine
 6. **Test changes** and iterate
@@ -68,8 +68,8 @@ Result: AI suggests implementation with code
 
 ### Understanding Existing Code
 ```
-Context: "How does the CSV validator work?"
-Action: Open csv-validator.js, use Cmd/Ctrl + L
+Context: "How does the middleware process product CSV uploads?"
+Action: Open key middleware files, use Cmd/Ctrl + L
 Result: AI walks through architecture and logic
 ```
 

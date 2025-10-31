@@ -1,0 +1,14 @@
+* text=auto eol=lf
+
+# Treat common docs as text
+*.md text
+*.html text
+*.css text
+*.js text
+
+# Normalize line endings for C#
+*.cs text eol=lf
+*.csproj text eol=lf
+
+# Ensure zips are binary
+*.zip binary

@@ -27,7 +27,7 @@ Can you show me where [specific feature] is implemented and explain how it works
 
 ### Adding New Validation
 ```
-I need to add a new CSV validation check for [specific issue]. Looking at the existing validations in csv-validator.js, where should I add this and what would the implementation look like?
+I need to add a new input validation check for [specific issue] in our data processing. Where should this live and what would the implementation look like?
 ```
 
 ### Fixing a Bug
@@ -87,11 +87,6 @@ Based on the error patterns in the investigation files, can you help me create a
 
 ## 🎯 Specific Feature Prompts
 
-### CSV Validator Enhancements
-```
-I found a new issue pattern in investigation [folder]. The CSV validator should catch this but currently doesn't. Can you add the validation check?
-```
-
 ### Middleware Improvements
 ```
 Looking at the database timeout in investigation 21OCT2025-8, how can we improve the middleware to handle large datasets better?
@@ -113,7 +108,7 @@ A client is trying to update products but getting failures. Based on the success
 
 ### Creating Test Scenarios
 ```
-Based on the investigation files, what test scenarios should I create to validate the CSV validator covers all known failure patterns?
+Based on the investigation files, what test scenarios should I create to ensure known failure patterns are covered?
 ```
 
 ### Validating Fixes
@@ -213,7 +208,7 @@ Shopify's API has changed. How do I update the GraphQL schema files and what els
 
 ### Creating New Tools
 ```
-Following the pattern of the CSV validator, can you help me create a new tool for [purpose]?
+Following existing patterns in this repo, can you help me create a new tool for [purpose]?
 ```
 
 ---

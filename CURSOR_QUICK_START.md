@@ -16,13 +16,13 @@
 
 ## 🎯 Essential Commands
 
-| Shortcut | Action | Use For |
-|----------|--------|---------|
-| `Cmd/Ctrl + K` | Inline edit | Quick code changes |
-| `Cmd/Ctrl + L` | Chat | Questions, debugging |
-| `Cmd/Ctrl + I` | Composer | Multi-file edits |
-| `@filename` | Reference file | Mention specific files in chat |
-| `#search` | Codebase search | Find code patterns |
+| Shortcut       | Action          | Use For                        |
+| -------------- | --------------- | ------------------------------ |
+| `Cmd/Ctrl + K` | Inline edit     | Quick code changes             |
+| `Cmd/Ctrl + L` | Chat            | Questions, debugging           |
+| `Cmd/Ctrl + I` | Composer        | Multi-file edits               |
+| `@filename`    | Reference file  | Mention specific files in chat |
+| `#search`      | Codebase search | Find code patterns             |
 
 ---
 

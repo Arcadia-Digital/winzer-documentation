@@ -17,9 +17,7 @@
 
 ### Day 1: First Tasks
 - [ ] Browse project structure (documentation, code, investigations)
-- [ ] Open `csv-validator.html` and understand the tool
 - [ ] Review 2-3 investigation files to understand failure patterns
-- [ ] Use Cursor to ask: "What is the CSV validator and how does it work?"
 - [ ] Make a small test edit (change a comment)
 - [ ] Use Cmd+L to ask: "What is the Winzer Middleware and what does it do?"
 
@@ -33,7 +31,6 @@
 - [ ] Review investigation file patterns
 - [ ] Identify key files in each component:
   - [ ] Middleware: `ProductFeedService.cs`
-  - [ ] CSV Validator: `csv-validator.js`
   - [ ] Documentation: `index.html`
 - [ ] Use Cursor to ask: "What are the common error patterns in the investigation files?"
 
@@ -169,7 +166,6 @@
 - `CURSOR_PROMPTS_REFERENCE.md` - Pre-written prompts
 - `.cursorrules` - Project-specific AI behavior
 - `DEVELOPER_HANDOFF.md` - Architecture overview
-- `CSV-VALIDATOR-README.md` - CSV validation tool
 
 ### Practice Exercises
 1. **Exercise 1**: Add a new validation check to CSV validator

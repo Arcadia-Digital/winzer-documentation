@@ -230,4 +230,4 @@ See `RELEASE_NOTES.md` for complete details. Summary:
 
 ---
 
-**Remember**: This is a handoff repository. All source code, documentation, and investigation data are preserved for continuity. Start with `HANDOFF.md`, then navigate to the specific documents you need.
+**Remember**: This is a handoff and documentation repository. All source code, documentation, and investigation data are preserved for continuity. Start with `HANDOFF.md`, then navigate to the specific documents you need.

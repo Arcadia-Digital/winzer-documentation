@@ -1,47 +1,233 @@
 # Winzer eCommerce Platform — Handoff Guide
 
-Audience: New maintainers taking over the Winzer multi-brand Shopify+ platform and middleware.
+**Primary entry point for AI agents and developers taking over this platform.**
 
-## Start Here
-- Read `winzer-documentation.html` for the storefront/theme overview
-- Read `winzer-middleware-documentation.html` for AWS/.NET middleware architecture
-- Open `index.html` locally to browse all docs (double-click to open in a browser)
-- Browse `investigations/` to understand real failure patterns and data
+---
 
-## Source Layout
-- `code/winzer-main/` — Shopify Dawn custom theme, SearchSpring React app, brand sites
-- `code/winzer-middleware/` — .NET 6 middleware (Lambda/ECS), SQL, resources
-- `investigations/` — Real CSVs + logs grouped by date for reference
-- `*.html` — Rendered docs; `*.md` — source docs
+## 🎯 For AI Agents
 
-## Local Preview
-- Quick local preview for HTML docs:
-  - macOS/Linux: `python3 -m http.server 8080` then open `http://localhost:8080/`
-  - Windows: `py -m http.server 8080`
+**Read this first**, then proceed to:
+1. `AI_ONBOARDING_CONTEXT.md` - Project history, recent investigations, current priorities, technical context
+2. `.cursorrules` - Project-specific AI behavior and coding guidelines
+3. `DATA_GUIDE.md` - How to safely use investigation files and sample data
 
-## Development (High-Level)
-- Theme: see `code/winzer-main/README.md` and SearchSpring `searchspring/winzer/`
-- Middleware: open `Winzer.ShopifyMiddleware.sln`; build with .NET 6 SDK
-- Data: use `Resources/*.csv` and `investigations/*` for realistic tests
+**Quick Context**: Multi-brand Shopify Plus platform with custom .NET middleware. Main challenge: CSV data quality issues causing middleware failures. Use `investigations/*` folders to understand real failure patterns.
 
-## Operational Runbooks
-- Shopify theme deploy: see `code/winzer-main/scripts/` and `README.md`
-- Middleware deploy: see `code/winzer-middleware/build/` and `README.md`
-- Incident triage: start with `investigations/*` patterns; check CloudWatch for middleware
-- SearchSpring issues: verify metafield formats and SearchSpring config (see docs)
+---
 
-## Security & Secrets
-- No secrets should be in this repo. See `SECURITY.md` for verification scope and how to report.
+## 🎯 For Developers
 
-## What Changed in Handoff
-- Removed CSV Validator (deprecated) and its links
-- Added repo hygiene: `.gitignore`, `.editorconfig`, `.gitattributes`
-- Added minimal project policies and CI checks for docs (optional)
+**Start here**, then choose your path:
 
-## Next Steps (Suggested)
-- Prioritize middleware GraphQL field mapping fixes and batching for large datasets
-- Continue using `investigations/*` to codify guardrails and user-facing guidance
+### Quick Start (10 minutes)
+1. Read `CURSOR_QUICK_START.md` if using Cursor
+2. Open `index.html` locally (double-click or `python3 -m http.server 8080`)
+3. Browse `code/winzer-main/README.md` and `code/winzer-middleware/README.md`
 
-## Support Ownership
-- Primary owner: Winzer team
-- Historical context: `AI_ONBOARDING_CONTEXT.md`, `DEVELOPER_HANDOFF.md`, `DEPLOYMENT.md`
+### Full Onboarding (1-2 hours)
+1. **Architecture Overview**: `DEVELOPER_HANDOFF.md`
+2. **Platform Details**: `winzer-documentation.html` (comprehensive platform guide)
+3. **Middleware Details**: `winzer-middleware-documentation.html`
+4. **Investigation Patterns**: Browse `investigations/*` and read `DATA_GUIDE.md`
+
+---
+
+## 📚 Document Navigation Guide
+
+### Essential Handoff Documents
+- **`HANDOFF.md`** (this file) - Starting point for all new maintainers
+- **`RELEASE_NOTES.md`** - What changed during handoff, known issues, next steps
+- **`DEVELOPER_HANDOFF.md`** - Architecture overview, platform structure, development setup
+- **`DEPLOYMENT.md`** - GitHub Pages deployment guide
+
+### AI-Specific Documentation
+- **`AI_ONBOARDING_CONTEXT.md`** - Project history, investigation summaries, technical context for AI agents
+- **`.cursorrules`** - Cursor AI behavior rules (also in Cursor settings)
+- **`DATA_GUIDE.md`** - How to use investigation files safely for debugging
+
+### Cursor/AI Tool Setup
+- **`CURSOR_QUICK_START.md`** - 10-minute Cursor setup
+- **`CURSOR_SETUP_GUIDE.md`** - Detailed Cursor configuration and workflows
+- **`CURSOR_ONBOARDING_CHECKLIST.md`** - Structured learning path for new team members
+- **`CURSOR_PROMPTS_REFERENCE.md`** - Pre-written prompts for common tasks
+
+### Platform Documentation (HTML)
+- **`index.html`** - Documentation hub (open locally or view on GitHub Pages)
+- **`winzer-documentation.html`** - Complete platform documentation (storefront, content, products, operations)
+- **`winzer-middleware-documentation.html`** - AWS middleware system documentation
+- **`winzer-product-data-map.html`** - Oracle PIM to Shopify field mapping
+- **`winzer-searchspring-documentation.html`** - SearchSpring configuration guide
+- **`winzer-shipperhq-documentation.html`** - ShipperHQ shipping rules
+
+### Project Policies
+- **`SECURITY.md`** - Security policy and vulnerability reporting
+- **`CONTRIBUTING.md`** - Contribution guidelines and branching workflow
+
+---
+
+## 🏗️ Repository Structure
+
+```
+winzer-documentation/
+├── Documentation
+│   ├── index.html                    # Start here - documentation hub
+│   ├── winzer-*-documentation.html  # Platform-specific docs
+│   └── *.md                          # Markdown source files
+├── code/
+│   ├── winzer-main/                  # Shopify theme + SearchSpring app
+│   │   ├── dawn/                     # Dawn theme customizations
+│   │   ├── searchspring/winzer/      # SearchSpring React app
+│   │   └── sites/                    # Multi-brand configurations
+│   └── winzer-middleware/            # .NET 6 AWS middleware
+│       ├── src/                      # Lambda functions, ECS tasks
+│       └── Resources/                # Sample CSV files
+├── investigations/                   # Real-world error logs and test data
+│   └── DDMMMYYYY[-N]/                # Date-organized investigation folders
+└── Configuration Files
+    ├── .cursorrules                  # Cursor AI behavior rules
+    ├── .gitignore                    # Git ignore patterns
+    ├── .editorconfig                 # Editor configuration
+    └── .eslintrc.json                # JavaScript linting rules
+```
+
+---
+
+## 🚀 Quick Start Paths
+
+### Path 1: Using Cursor AI
+1. Install Cursor: [cursor.sh](https://cursor.sh)
+2. Clone repo: `git clone https://github.com/petebuzzell-ad/winzer-documentation.git`
+3. Open in Cursor and add `.cursorrules` to Settings → Rules
+4. Follow `CURSOR_QUICK_START.md` for immediate productivity
+5. Use `CURSOR_PROMPTS_REFERENCE.md` for common tasks
+
+### Path 2: Traditional Development
+1. Clone repository
+2. Read `DEVELOPER_HANDOFF.md` for architecture
+3. Set up development environment per `code/*/README.md` files
+4. Open `index.html` to browse documentation
+5. Review `investigations/*` to understand failure patterns
+
+### Path 3: Operations/Incident Response
+1. Check `investigations/*` for similar failure patterns
+2. Review `DATA_GUIDE.md` for safe data handling
+3. Reference `winzer-middleware-documentation.html` for middleware issues
+4. Use `RELEASE_NOTES.md` for known issues
+
+---
+
+## 🔧 Local Development
+
+### Preview Documentation Locally
+```bash
+# From repo root
+python3 -m http.server 8080
+# Then open http://localhost:8080/ in your browser
+```
+
+### Theme Development (`code/winzer-main/`)
+```bash
+cd code/winzer-main
+npm install
+# SearchSpring React app
+cd searchspring/winzer
+npm install
+npm run build
+```
+
+### Middleware Development (`code/winzer-middleware/`)
+```bash
+cd code/winzer-middleware
+# Requires .NET 6 SDK
+dotnet restore
+dotnet build
+```
+
+---
+
+## 📋 Operational Runbooks
+
+### Deployment
+- **Theme**: See `code/winzer-main/scripts/` and README
+- **Middleware**: See `code/winzer-middleware/build/` and README
+- **GitHub Pages**: See `DEPLOYMENT.md`
+
+### Incident Triage
+1. Check `investigations/*` for similar patterns
+2. Review AWS CloudWatch logs for middleware errors
+3. Verify SearchSpring metafield formats
+4. Reference relevant HTML documentation sections
+
+### Data Quality Issues
+- Use `DATA_GUIDE.md` for investigation file patterns
+- Common issues documented in `.cursorrules` (CSV Data Quality Issues section)
+- Real examples in `investigations/*` folders
+
+---
+
+## 🔐 Security & Compliance
+
+- **Security Policy**: See `SECURITY.md`
+- **No secrets in repo**: Verified at handoff; use secret managers
+- **Contribution Guidelines**: See `CONTRIBUTING.md`
+
+---
+
+## 📝 What Changed in Handoff
+
+See `RELEASE_NOTES.md` for complete details. Summary:
+- Removed CSV Validator (deprecated)
+- Added repo hygiene configs (`.gitignore`, `.editorconfig`, `.gitattributes`)
+- Added linting/formatting configs (ESLint, Prettier)
+- Added CI workflow for docs validation
+- Created handoff documentation suite
+
+---
+
+## 🎯 Recommended Reading Order
+
+### For New Developers
+1. `HANDOFF.md` (this file)
+2. `CURSOR_QUICK_START.md` or `DEVELOPER_HANDOFF.md`
+3. `winzer-documentation.html` (platform overview)
+4. `DATA_GUIDE.md` (understanding investigations)
+5. Code READMEs in `code/*/README.md`
+
+### For AI Agents
+1. `HANDOFF.md` (this file)
+2. `AI_ONBOARDING_CONTEXT.md` (project history and context)
+3. `.cursorrules` (behavior guidelines)
+4. `DATA_GUIDE.md` (data usage patterns)
+
+### For Operations/Support
+1. `HANDOFF.md` (this file)
+2. `RELEASE_NOTES.md` (known issues)
+3. `DATA_GUIDE.md` (investigation file usage)
+4. `winzer-middleware-documentation.html` (middleware details)
+
+---
+
+## 🔗 Key Links
+
+- **Live Documentation**: https://petebuzzell-ad.github.io/winzer-documentation/
+- **Repository**: https://github.com/petebuzzell-ad/winzer-documentation
+- **Platform Docs**: Open `index.html` locally or view on GitHub Pages
+
+---
+
+## ⚡ Next Steps
+
+**Immediate Priorities** (per `RELEASE_NOTES.md`):
+- Fix middleware GraphQL field mapping for variant creation
+- Add batching/backoff for large dataset uploads (prevent DB timeouts)
+- Continue documenting failure patterns from `investigations/*`
+
+**For New Maintainers**:
+- Complete your chosen onboarding path above
+- Familiarize yourself with `investigations/*` structure
+- Set up local development environment
+- Review code READMEs for specific setup instructions
+
+---
+
+**Remember**: This is a handoff repository. All source code, documentation, and investigation data are preserved for continuity. Start with `HANDOFF.md`, then navigate to the specific documents you need.

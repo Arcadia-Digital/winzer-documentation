@@ -1,0 +1,830 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
+    <meta name="googlebot" content="noindex, nofollow, noarchive, nosnippet">
+    <title>Winzer Pricing System Documentation</title>
+    <link rel="stylesheet" href="arcadia-style.css">
+    <link rel="icon" type="image/webp" href="assets/favicon.webp">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({ startOnLoad: true });
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1 id="winzer-pricing-system-documentation">Winzer Pricing System Documentation</h1>
+        
+        <div class="two-column-layout">
+            <nav class="toc-sidebar">
+                <h3>Table of Contents</h3>
+<ul>
+<li><a href="#overview">Overview</a>
+<li><a href="#price-priority-order">Price Priority Order</a>
+<ul>
+<li><a href="#winzer-fastserv-priority-hierarchy">Winzer & FastServ Priority Hierarchy</a>
+<li><a href="#onesource-priority-hierarchy">OneSource Priority Hierarchy</a>
+</ul>
+</li>
+<li><a href="#onesource-pricing">OneSource Pricing</a>
+<ul>
+<li><a href="#key-characteristics">Key Characteristics</a>
+<li><a href="#price-display-rules">Price Display Rules</a>
+<li><a href="#bulk-pricing-implementation">Bulk Pricing Implementation</a>
+</ul>
+</li>
+<li><a href="#winzer-fastserv-pricing">Winzer & FastServ Pricing</a>
+<ul>
+<li><a href="#key-characteristics">Key Characteristics</a>
+<li><a href="#price-display-rules">Price Display Rules</a>
+<ul>
+<li><a href="#initial-display-shopify-catalog-price">Initial Display (Shopify Catalog Price)</a></li>
+<li><a href="#exact-pricing-4-decimal-precision">Exact Pricing (4-Decimal Precision)</a></li>
+</ul>
+</li>
+<li><a href="#price-display-conditions">Price Display Conditions</a>
+<li><a href="#implementation-details">Implementation Details</a>
+</ul>
+</li>
+<li><a href="#price-rounding-rules">Price Rounding Rules</a>
+<ul>
+<li><a href="#onesource">OneSource</a>
+<li><a href="#winzer-fastserv">Winzer & FastServ</a>
+</ul>
+</li>
+<li><a href="#catalog-assignment-logic">Catalog Assignment Logic</a>
+<ul>
+<li><a href="#winzer-fastserv-catalog-system">Winzer & FastServ Catalog System</a>
+<ul>
+<li><a href="#contract-catalogs">Contract Catalogs</a></li>
+<li><a href="#last-purchase-catalogs">Last Purchase Catalogs</a></li>
+<li><a href="#template-pricing">Template Pricing</a></li>
+</ul>
+</li>
+<li><a href="#onesource-catalog-system">OneSource Catalog System</a>
+</ul>
+</li>
+<li><a href="#pricing-api">Pricing API</a>
+<ul>
+<li><a href="#endpoints">Endpoints</a>
+<ul>
+<li><a href="#customer-product-pricing">Customer Product Pricing</a></li>
+<li><a href="#bulk-pricing">Bulk Pricing</a></li>
+</ul>
+</li>
+<li><a href="#api-implementation">API Implementation</a>
+</ul>
+</li>
+<li><a href="#frontend-implementation">Frontend Implementation</a>
+<ul>
+<li><a href="#product-detail-page-pdp">Product Detail Page (PDP)</a>
+<ul>
+<li><a href="#onesource-pdp">OneSource PDP</a></li>
+<li><a href="#winzer-fastserv-pdp">Winzer & FastServ PDP</a></li>
+</ul>
+</li>
+<li><a href="#searchspring-plp-pricing-display">SearchSpring (PLP) Pricing Display</a>
+<li><a href="#price-snippet">Price Snippet</a>
+</ul>
+</li>
+<li><a href="#troubleshooting">Troubleshooting</a>
+<ul>
+<li><a href="#price-not-displaying-correctly">Price Not Displaying Correctly</a>
+<li><a href="#not-available-to-purchase-showing">"Not Available to Purchase" Showing</a>
+<li><a href="#exact-pricing-not-working">Exact Pricing Not Working</a>
+<li><a href="#bulk-pricing-not-showing-onesource">Bulk Pricing Not Showing (OneSource)</a>
+<li><a href="#price-priority-issues">Price Priority Issues</a>
+</ul>
+</li>
+<li><a href="#technical-reference">Technical Reference</a>
+<ul>
+<li><a href="#database-schema">Database Schema</a>
+<ul>
+<li><a href="#contract-pricing-table">Contract Pricing Table</a></li>
+<li><a href="#last-purchase-pricing-table">Last Purchase Pricing Table</a></li>
+<li><a href="#template-pricing-table">Template Pricing Table</a></li>
+<li><a href="#bulk-pricing-table">Bulk Pricing Table</a></li>
+</ul>
+</li>
+<li><a href="#code-locations">Code Locations</a>
+<li><a href="#pricing-feed-import-process">Pricing Feed Import Process</a>
+</ul>
+</li>
+</ul>
+            </nav>
+            
+            <main>
+                <div class="pricing-documentation">
+                    <h1 id="winzer-pricing-system-documentation">Winzer Pricing System Documentation</h1>
+<strong>Complete guide to pricing display logic, rules, and implementation across OneSource, Winzer, and FastServ brands.</strong>
+<hr>
+<h2 id="overview">Overview</h2>
+<p>
+The Winzer platform uses a sophisticated multi-tier pricing system that varies by brand:
+</p>
+<ul>
+<li><strong>OneSource</strong>: Bulk pricing with quantity breaks, template pricing in Shopify catalogs</li>
+<li><strong>Winzer</strong>: B2B pricing with exact 4-decimal precision, contract/last purchase/template pricing</li>
+<li><strong>FastServ</strong>: B2B pricing with exact 4-decimal precision, contract/last purchase/template pricing</li>
+</ul>
+<strong>Critical</strong>: Each brand handles pricing differently. Understanding these rules is essential for troubleshooting pricing issues.
+<hr>
+<h2 id="price-priority-order">Price Priority Order</h2>
+<h3 id="winzer-fastserv-priority-hierarchy">Winzer & FastServ Priority Hierarchy</h3>
+<p>
+When multiple pricing types exist for a customer, the system uses this priority order:
+</p>
+<ol>
+<li><strong>Contract Pricing</strong> (Highest Priority)</li>
+</ol>
+<p>
+   - Stored in <code>contract_pricing</code> database table
+   - Assigned via Shopify Catalogs (<code>Contract_{COMPANY_ID}</code>)
+   - Always takes precedence over other pricing types
+   - Middleware prevents items from appearing in last purchase catalogs if they exist in contract catalogs
+   - <strong>Source</strong>: ERP contract agreements
+</p>
+<ol>
+<li><strong>Last Purchase Pricing</strong></li>
+</ol>
+<p>
+   - Stored in <code>last_purchase_pricing</code> database table
+   - Assigned via Shopify Catalogs (<code>Company_{COMPANY_ID}</code>)
+   - Used when no contract pricing exists
+   - Based on customer's previous purchase history from ERP
+   - <strong>Source</strong>: Historical order data
+</p>
+<ol>
+<li><strong>Template Pricing</strong></li>
+</ol>
+<p>
+   - Stored in <code>template_pricing</code> database table
+   - <strong>NOT</strong> assigned via Shopify Catalogs (pulled via API only)
+   - Used when no contract or last purchase pricing exists
+   - Company must have <code>cql.template_pricing</code> metafield set
+   - <strong>Template Types</strong>: FRANCHISE, LOW_MRO, INN1, GS01, FASTSERV
+   - <strong>Source</strong>: Template pricing agreements (e.g., franchise pricing)
+</p>
+<ol>
+<li><strong>Base Shopify Price</strong> (Fallback)</li>
+</ol>
+<p>
+   - Standard variant price in Shopify
+   - Used when no customer-specific pricing exists
+   - <strong>Source</strong>: Default product pricing
+</p>
+<h3 id="onesource-priority-hierarchy">OneSource Priority Hierarchy</h3>
+<p>
+OneSource uses a simpler pricing model:
+</p>
+<ol>
+<li><strong>Template Pricing</strong> (via Shopify Catalog)</li>
+</ol>
+<p>
+   - Assigned directly to Shopify catalogs
+   - Not API-only like Winzer/FastServ
+   - Base price for all customers
+</p>
+<ol>
+<li><strong>Bulk Pricing</strong> (Quantity Breaks)</li>
+</ol>
+<p>
+   - Applied on top of template pricing
+   - Quantity breaks determine final price
+   - Fetched via API: <code>/apps/pricing-api/bulk-pricing</code>
+</p>
+<hr>
+<h2 id="onesource-pricing">OneSource Pricing</h2>
+<h3 id="key-characteristics">Key Characteristics</h3>
+<ul>
+<li><strong>Bulk Pricing Enabled</strong>: Quantity breaks determine price</li>
+<li><strong>No Exact Pricing</strong>: Prices rounded to nearest cent (no 4-decimal display)</li>
+<li><strong>Template Pricing in Catalogs</strong>: Uses template pricing directly in Shopify catalogs (not API-only)</li>
+<li><strong>Bulk Pricing Table</strong>: Shows quantity breaks on Product Detail Page (PDP)</li>
+<li><strong>Public Access</strong>: No login required to see pricing</li>
+</ul>
+<h3 id="price-display-rules">Price Display Rules</h3>
+<ol>
+<li><strong>Base Price</strong>: From Shopify catalog (template pricing)</li>
+<li><strong>Quantity Breaks</strong>: Applied via bulk pricing API</li>
+<li><strong>Display</strong>: Shows base price, bulk pricing table shows all quantity tiers</li>
+<li><strong>No Exact Pricing Link</strong>: "See .0000 Pricing" feature not available</li>
+</ol>
+<h3 id="bulk-pricing-implementation">Bulk Pricing Implementation</h3>
+<strong>API Endpoint:</strong>
+<pre><code class="language-">GET /apps/pricing-api/bulk-pricing?variant_ids={variantIds}
+</code></pre>
+<strong>Response Format:</strong>
+<pre><code class="language-json">[
+<p>
+  {
+    "variant_id": "123456",
+    "quantity_breaks": [
+      { "quantity": 1, "price": "10.00" },
+      { "quantity": 10, "price": "9.50" },
+      { "quantity": 50, "price": "9.00" }
+    ]
+  }
+]
+</p>
+</code></pre>
+<strong>PDP Display:</strong>
+<ul>
+<li>Bulk pricing table appears below product price</li>
+<li>Shows all quantity tiers</li>
+<li>Updates dynamically when variant changes</li>
+<li>Hidden if no bulk pricing available</li>
+</ul>
+<strong>Code Location:</strong>
+<ul>
+<li><code>code/winzer-main/sites/_shared/assets/global.js</code> - <code>updateBulkPricing()</code> method</li>
+<li><code>code/winzer-main/sites/_shared/sections/main-product.liquid</code> - Bulk pricing table block</li>
+</ul>
+<hr>
+<h2 id="winzer-fastserv-pricing">Winzer & FastServ Pricing</h2>
+<h3 id="key-characteristics">Key Characteristics</h3>
+<ul>
+<li><strong>Exact Pricing Enabled</strong>: 4-decimal pricing available via API</li>
+<li><strong>Force Sign-In</strong>: Must be logged in to see pricing</li>
+<li><strong>B2B Pricing</strong>: Customer-specific pricing based on company agreements</li>
+<li><strong>Exact Pricing Link</strong>: "See .0000 Pricing" appears on PDP (non-OneSource stores only)</li>
+<li><strong>Multiple Pricing Tiers</strong>: Contract, last purchase, template, or base pricing</li>
+</ul>
+<h3 id="price-display-rules">Price Display Rules</h3>
+<h4 id="initial-display-shopify-catalog-price">Initial Display (Shopify Catalog Price)</h4>
+<ol>
+<li><strong>Price Source</strong>: Shopify catalog price (rounded to nearest cent)</li>
+</ol>
+<p>
+   - Contract pricing → Last purchase pricing → Base price
+</p>
+<ol>
+<li><strong>Display Format</strong>: 2 decimal places (e.g., $10.50)</li>
+<li><strong>Conditional Display</strong>: </li>
+</ol>
+<p>
+   - If price >= $1,000,000 or <= $0: Shows "Not available to purchase"
+   - Otherwise: Shows rounded price
+</p>
+<h4 id="exact-pricing-4-decimal-precision">Exact Pricing (4-Decimal Precision)</h4>
+<ol>
+<li><strong>Trigger</strong>: Customer clicks "See .0000 Pricing" link</li>
+<li><strong>API Call</strong>: <code>/apps/pricing-api/customer-product-pricing?current_company_id={companyId}&product_ids={productId}</code></li>
+<li><strong>Response</strong>: 4-decimal precision pricing (e.g., "61.6440", "2.0064")</li>
+<li><strong>Display Update</strong>: Price updates to show 4 decimal places</li>
+<li><strong>Link Removal</strong>: Link disappears after successful fetch</li>
+</ol>
+<h3 id="price-display-conditions">Price Display Conditions</h3>
+<strong>Normal Pricing:</strong>
+<ul>
+<li>Shows rounded price (2 decimals) by default</li>
+<li>Shows exact price (4 decimals) after "See .0000 Pricing" click</li>
+</ul>
+<strong>Not Available:</strong>
+<ul>
+<li>Price >= $1,000,000 or <= $0</li>
+<li>Shows "Not available to purchase" message</li>
+<li>Exact pricing link hidden</li>
+</ul>
+<strong>Template Pricing Fallback:</strong>
+<ul>
+<li>If company has <code>cql.template_pricing</code> metafield AND price >= $1,000,000</li>
+<li>Shows "See pricing" instead of "Not available to purchase"</li>
+<li>Allows customers to request pricing for non-catalog items</li>
+</ul>
+<h3 id="implementation-details">Implementation Details</h3>
+<strong>PDP Code:</strong>
+<pre><code class="language-liquid">{% if pdp_storename != onesource_store_name_string and customer != nil %}
+  <div class="no-js-hidden pdp__exact-pricing">
+<p>
+    {% unless sofa_variant.price >= 1000000 or sofa_variant.price <= 0 %}
+      {% render 'exact-pricing' %}
+    {% endunless %}
+</p>
+  </div>
+<p>
+{% endif %}
+</p>
+</code></pre>
+<strong>Price Validation:</strong>
+<pre><code class="language-liquid">{% if sofa_variant.price >= 1000000 or sofa_variant.price <= 0 %}
+  <h5 style="margin:0">{{ 'products.product.not_in_catalog' | t }}</h5>
+<p>
+{% else %}
+  {%- render 'price', product: product, use_variant: true, show_badges: false, price_class: 'price--large' -%}
+{% endif %}
+</p>
+</code></pre>
+<strong>JavaScript Implementation:</strong>
+<ul>
+<li><code>code/winzer-main/sites/_shared/assets/global.js</code> - <code>fetchExactPrice()</code> function</li>
+<li><code>code/winzer-main/sites/_shared/assets/four-decimal-pricing.js</code> - Add to cart integration</li>
+<li><code>code/winzer-main/sites/_shared/snippets/exact-pricing.liquid</code> - Link and tooltip</li>
+</ul>
+<hr>
+<h2 id="price-rounding-rules">Price Rounding Rules</h2>
+<h3 id="onesource">OneSource</h3>
+<strong>Rounding Method:</strong>
+<pre><code class="language-csharp">Math.Ceiling(price * 100) / 100
+</code></pre>
+<strong>Application:</strong>
+<ul>
+<li>Applied during pricing feed import</li>
+<li>All prices rounded to nearest cent</li>
+<li>No 4-decimal precision available</li>
+</ul>
+<strong>Example:</strong>
+<ul>
+<li>Input: <code>10.1234</code> → Output: <code>10.13</code></li>
+<li>Input: <code>10.1201</code> → Output: <code>10.13</code></li>
+</ul>
+<h3 id="winzer-fastserv">Winzer & FastServ</h3>
+<strong>Shopify Catalog Prices:</strong>
+<ul>
+<li>Rounded to nearest cent: <code>Math.Ceiling(price * 100) / 100</code></li>
+<li>Applied during pricing feed import</li>
+<li>Displayed with 2 decimal places</li>
+</ul>
+<strong>Exact Pricing API:</strong>
+<ul>
+<li>Returns 4-decimal precision (e.g., "61.6440", "2.0064")</li>
+<li>Not rounded in API response</li>
+<li>Displayed with 4 decimal places after user clicks "See .0000 Pricing"</li>
+</ul>
+<strong>Display Behavior:</strong>
+<ul>
+<li><strong>Default</strong>: 2 decimals (e.g., $10.50)</li>
+<li><strong>After Exact Pricing Click</strong>: 4 decimals (e.g., $10.5000)</li>
+</ul>
+<hr>
+<h2 id="catalog-assignment-logic">Catalog Assignment Logic</h2>
+<h3 id="winzer-fastserv-catalog-system">Winzer & FastServ Catalog System</h3>
+<p>
+The middleware creates and manages Shopify catalogs to assign pricing to companies.
+</p>
+<h4 id="contract-catalogs">Contract Catalogs</h4>
+<strong>Naming Convention:</strong>
+<pre><code class="language-">Contract_{COMPANY_ID}
+</code></pre>
+<strong>Characteristics:</strong>
+<ul>
+<li>Created for each company with contract pricing</li>
+<li>Highest priority in Shopify's catalog system</li>
+<li>Contains variants with contract-specific pricing</li>
+<li>Prevents items from appearing in last purchase catalogs</li>
+</ul>
+<strong>Creation Process:</strong>
+<ol>
+<li>Middleware identifies contract pricing in CSV feed</li>
+<li>Creates catalog if it doesn't exist</li>
+<li>Creates associated price list</li>
+<li>Creates publication for catalog</li>
+<li>Assigns catalog to company locations</li>
+</ol>
+<h4 id="last-purchase-catalogs">Last Purchase Catalogs</h4>
+<strong>Naming Convention:</strong>
+<pre><code class="language-">Company_{COMPANY_ID}
+</code></pre>
+<strong>Characteristics:</strong>
+<ul>
+<li>Created for each company with last purchase pricing</li>
+<li>Lower priority than contract catalogs</li>
+<li><strong>Important</strong>: Middleware prevents items from being added to last purchase catalog if they already exist in contract catalog (to maintain priority)</li>
+</ul>
+<strong>Creation Process:</strong>
+<ol>
+<li>Middleware identifies last purchase pricing in CSV feed</li>
+<li>Checks if variant exists in contract catalog</li>
+<li>If not in contract catalog, adds to last purchase catalog</li>
+<li>Creates catalog, price list, and publication if needed</li>
+<li>Assigns catalog to company locations</li>
+</ol>
+<h4 id="template-pricing">Template Pricing</h4>
+<strong>Catalog Assignment:</strong>
+<ul>
+<li><strong>NOT</strong> assigned via Shopify Catalogs</li>
+<li>Stored in database only (<code>template_pricing</code> table)</li>
+<li>Retrieved via Pricing API when company has <code>cql.template_pricing</code> metafield</li>
+</ul>
+<strong>Why Not in Catalogs:</strong>
+<ul>
+<li>Historical decision (WSSBPB-617)</li>
+<li>Template pricing pulled via API for flexibility</li>
+<li>Allows dynamic pricing without catalog updates</li>
+</ul>
+<h3 id="onesource-catalog-system">OneSource Catalog System</h3>
+<strong>Template Pricing:</strong>
+<ul>
+<li>Assigned directly to Shopify catalogs</li>
+<li>Not API-only like Winzer/FastServ</li>
+<li>Simpler catalog structure</li>
+</ul>
+<hr>
+<h2 id="pricing-api">Pricing API</h2>
+<h3 id="endpoints">Endpoints</h3>
+<h4 id="customer-product-pricing">Customer Product Pricing</h4>
+<strong>Endpoint:</strong>
+<pre><code class="language-">GET /apps/pricing-api/customer-product-pricing?current_company_id={companyId}&product_ids={productId}
+</code></pre>
+<strong>Purpose:</strong>
+<ul>
+<li>Get exact 4-decimal pricing for B2B customers</li>
+<li>Returns customer-specific pricing based on priority order</li>
+<li>Used by PDP and PLP for exact pricing display</li>
+</ul>
+<strong>Parameters:</strong>
+<ul>
+<li><code>current_company_id</code>: Shopify company ID (from <code>customer.current_company.id</code>)</li>
+<li><code>product_ids</code>: Comma-separated product IDs</li>
+</ul>
+<strong>Response Format:</strong>
+<pre><code class="language-json">[
+<p>
+  {
+    "product_id": "123456",
+    "variants": [
+      {
+        "id": "789012",
+        "price": "61.6440"
+      },
+      {
+        "id": "789013",
+        "price": "2.0064"
+      }
+    ]
+  }
+]
+</p>
+</code></pre>
+<strong>Pricing Priority Logic:</strong>
+<ol>
+<li>Check contract pricing for company</li>
+<li>If not found, check last purchase pricing</li>
+<li>If not found, check template pricing (if company has <code>cql.template_pricing</code> metafield)</li>
+<li>If not found, return base Shopify price</li>
+</ol>
+<h4 id="bulk-pricing">Bulk Pricing</h4>
+<strong>Endpoint:</strong>
+<pre><code class="language-">GET /apps/pricing-api/bulk-pricing?variant_ids={variantIds}
+</code></pre>
+<strong>Purpose:</strong>
+<ul>
+<li>Get quantity break pricing for variants</li>
+<li>Used by OneSource for bulk pricing table</li>
+<li>Used by SearchSpring PLP for quantity-based pricing</li>
+</ul>
+<strong>Parameters:</strong>
+<ul>
+<li><code>variant_ids</code>: Comma-separated variant IDs</li>
+</ul>
+<strong>Response Format:</strong>
+<pre><code class="language-json">[
+<p>
+  {
+    "variant_id": "123456",
+    "quantity_breaks": [
+      { "quantity": 1, "price": "10.00" },
+      { "quantity": 10, "price": "9.50" },
+      { "quantity": 50, "price": "9.00" }
+    ]
+  }
+]
+</p>
+</code></pre>
+<h3 id="api-implementation">API Implementation</h3>
+<strong>Backend:</strong>
+<ul>
+<li>Managed by CQL Corp</li>
+<li>Custom pricing integration</li>
+<li>Connects to PostgreSQL database for pricing data</li>
+<li>Integrates with Oracle ERP for real-time pricing</li>
+</ul>
+<strong>Database Tables:</strong>
+<ul>
+<li><code>contract_pricing</code> - Contract-specific pricing</li>
+<li><code>last_purchase_pricing</code> - Last purchase pricing</li>
+<li><code>template_pricing</code> - Template pricing</li>
+<li><code>bulk_pricing</code> - Quantity break pricing</li>
+</ul>
+<hr>
+<h2 id="frontend-implementation">Frontend Implementation</h2>
+<h3 id="product-detail-page-pdp">Product Detail Page (PDP)</h3>
+<h4 id="onesource-pdp">OneSource PDP</h4>
+<strong>Bulk Pricing Display:</strong>
+<pre><code class="language-liquid">{% if pdp_storename == onesource_store_name_string %}
+  <div class="pdp__bulk-pricing accordion js-bulk-pricing-hidden hidden">
+    <details id="Details-{{ product.id }}">
+      <summary class="pdp__bulk-pricing-toggle-wrap">
+        <h2 class="accordion__title pdp__bulk-pricing-toggle">
+<p>
+          {{ block.settings.toggle_txt }}
+</p>
+        </h2>
+      </summary>
+      <!-- Bulk pricing table -->
+    </details>
+  </div>
+  <p class="pdp__bulk-promo-msg js-bulk-pricing-hidden hidden">
+<p>
+    {{ 'products.product.bulk_pricing.availability_msg' | t }}
+</p>
+  </p>
+<p>
+{% endif %}
+</p>
+</code></pre>
+<strong>JavaScript:</strong>
+<ul>
+<li><code>updateBulkPricing()</code> - Fetches and displays bulk pricing</li>
+<li><code>buildBulkPriceTable()</code> - Renders quantity break table</li>
+<li>Located in <code>code/winzer-main/sites/_shared/assets/global.js</code></li>
+</ul>
+<h4 id="winzer-fastserv-pdp">Winzer & FastServ PDP</h4>
+<strong>Exact Pricing Link:</strong>
+<pre><code class="language-liquid">{% if pdp_storename != onesource_store_name_string and customer != nil %}
+  <div class="no-js-hidden pdp__exact-pricing">
+<p>
+    {% unless sofa_variant.price >= 1000000 or sofa_variant.price <= 0 %}
+      {% render 'exact-pricing' %}
+    {% endunless %}
+</p>
+  </div>
+<p>
+{% endif %}
+</p>
+</code></pre>
+<strong>Exact Pricing Snippet:</strong>
+<ul>
+<li><code>code/winzer-main/sites/_shared/snippets/exact-pricing.liquid</code></li>
+<li>Displays "See .0000 Pricing" link with tooltip</li>
+<li>Triggers <code>fetchExactPrice()</code> JavaScript function</li>
+</ul>
+<strong>Price Display:</strong>
+<pre><code class="language-liquid">{% if sofa_variant.price >= 1000000 or sofa_variant.price <= 0 %}
+  <h5 style="margin:0">{{ 'products.product.not_in_catalog' | t }}</h5>
+<p>
+{% else %}
+  {%- render 'price', product: product, use_variant: true, show_badges: false, price_class: 'price--large' -%}
+</p>
+  <span class="pdp__price-unit-qty"> / 
+<p>
+    {% if sofa_variant.metafields.cql.package_display != blank %}
+      {{ sofa_variant.metafields.cql.package_display }}
+    {% else %}
+      {{ 'products.product.price_unit_qty_default' | t }}
+    {% endif %}
+</p>
+  </span>
+<p>
+{% endif %}
+</p>
+</code></pre>
+<h3 id="searchspring-plp-pricing-display">SearchSpring (PLP) Pricing Display</h3>
+<strong>Price Calculation Priority:</strong>
+<pre><code class="language-javascript">function calculatePrice() {
+<p>
+  return props.findExactPrice() ?? (
+    props.b2bPrice ?? (
+      currentSiteFeatures.b2b_pricing ? <span class="loading-price"></span> : (
+        quantityBreakPrice
+      )
+    )
+  )
+}
+</p>
+</code></pre>
+<strong>Priority Order:</strong>
+<ol>
+<li>Exact price (if fetched via API)</li>
+<li>B2B price (if available)</li>
+<li>Bulk pricing quantity break price (OneSource only)</li>
+<li>Base variant price</li>
+</ol>
+<strong>Implementation:</strong>
+<ul>
+<li><code>code/winzer-main/searchspring/winzer/src/components/ResultVariantRow/ResultVariantRow.js</code></li>
+<li><code>VariantRowPriceData</code> component handles price display</li>
+<li><code>fetchB2BPricing()</code> - Fetches B2B pricing for logged-in customers</li>
+<li><code>fetchExactPricing()</code> - Fetches exact 4-decimal pricing</li>
+</ul>
+<h3 id="price-snippet">Price Snippet</h3>
+<strong>Location:</strong>
+<ul>
+<li><code>code/winzer-main/sites/_shared/snippets/price.liquid</code></li>
+<li><code>code/winzer-main/dawn/snippets/price.liquid</code></li>
+</ul>
+<strong>Functionality:</strong>
+<ul>
+<li>Renders product or variant price</li>
+<li>Handles sale pricing (compare_at_price)</li>
+<li>Shows "from" price if price varies</li>
+<li>Displays unit price if available</li>
+</ul>
+<strong>Usage:</strong>
+<pre><code class="language-liquid">{% render 'price', product: product, use_variant: true, show_badges: false, price_class: 'price--large' %}
+</code></pre>
+<hr>
+<h2 id="troubleshooting">Troubleshooting</h2>
+<h3 id="price-not-displaying-correctly">Price Not Displaying Correctly</h3>
+<strong>Checklist:</strong>
+<ol>
+<li><strong>Identify Brand</strong>: OneSource vs Winzer/FastServ have different rules</li>
+<li><strong>Verify Login</strong>: Winzer/FastServ require customer login</li>
+<li><strong>Check Catalog Assignment</strong>: Verify company has correct catalog in Shopify</li>
+<li><strong>Database Verification</strong>: Check pricing exists in database tables</li>
+</ol>
+<p>
+   - <code>contract_pricing</code> table
+   - <code>last_purchase_pricing</code> table
+   - <code>template_pricing</code> table
+   - <code>bulk_pricing</code> table
+</p>
+<ol>
+<li><strong>Company Metafield</strong>: Check <code>cql.template_pricing</code> metafield for template pricing</li>
+<li><strong>API Logs</strong>: Review Pricing API logs for exact pricing requests</li>
+<li><strong>Browser Console</strong>: Check for JavaScript errors</li>
+</ol>
+<strong>Common Issues:</strong>
+<ul>
+<li>Customer not logged in (Winzer/FastServ)</li>
+<li>Company not assigned to catalog</li>
+<li>Pricing not imported from ERP</li>
+<li>API endpoint not accessible</li>
+<li>JavaScript errors preventing price fetch</li>
+</ul>
+<h3 id="not-available-to-purchase-showing">"Not Available to Purchase" Showing</h3>
+<strong>Causes:</strong>
+<ul>
+<li>Price is >= $1,000,000 or <= $0</li>
+<li>Product not in company's catalog</li>
+<li>No pricing data for company/variant combination</li>
+</ul>
+<strong>Solutions:</strong>
+<ul>
+<li>Check if company has template pricing metafield (should show "See pricing" instead)</li>
+<li>Verify product exists in company's catalog</li>
+<li>Check pricing feed import logs</li>
+<li>Review database for pricing records</li>
+</ul>
+<h3 id="exact-pricing-not-working">Exact Pricing Not Working</h3>
+<strong>Checklist:</strong>
+<ol>
+<li><strong>Customer Login</strong>: Verify customer is logged in</li>
+<li><strong>Company ID</strong>: Check <code>customer.current_company.id</code> is set</li>
+<li><strong>API Endpoint</strong>: Verify <code>/apps/pricing-api/customer-product-pricing</code> is accessible</li>
+<li><strong>Browser Console</strong>: Check for API errors</li>
+<li><strong>Network Tab</strong>: Verify API request is being made</li>
+<li><strong>Response Format</strong>: Check API response format matches expected structure</li>
+</ol>
+<strong>Common Issues:</strong>
+<ul>
+<li><code>customer.current_company.id</code> is null</li>
+<li>API endpoint returns error</li>
+<li>CORS issues preventing API call</li>
+<li>JavaScript errors in <code>fetchExactPrice()</code> function</li>
+</ul>
+<h3 id="bulk-pricing-not-showing-onesource">Bulk Pricing Not Showing (OneSource)</h3>
+<strong>Checklist:</strong>
+<ol>
+<li><strong>Variant ID</strong>: Verify variant has bulk pricing data</li>
+<li><strong>API Endpoint</strong>: Check <code>/apps/pricing-api/bulk-pricing</code> is accessible</li>
+<li><strong>JavaScript</strong>: Verify <code>updateBulkPricing()</code> is being called</li>
+<li><strong>Database</strong>: Check <code>bulk_pricing</code> table for variant records</li>
+<li><strong>Quantity Breaks</strong>: Verify quantity breaks exist for variant</li>
+</ol>
+<strong>Common Issues:</strong>
+<ul>
+<li>No bulk pricing data for variant</li>
+<li>API endpoint not responding</li>
+<li>JavaScript errors preventing table display</li>
+<li>Variant switching not triggering price update</li>
+</ul>
+<h3 id="price-priority-issues">Price Priority Issues</h3>
+<strong>Symptoms:</strong>
+<ul>
+<li>Wrong price showing for customer</li>
+<li>Contract price not overriding last purchase price</li>
+<li>Template pricing not showing when expected</li>
+</ul>
+<strong>Solutions:</strong>
+<ol>
+<li><strong>Verify Priority Order</strong>: Check database for all pricing types</li>
+<li><strong>Catalog Assignment</strong>: Verify correct catalog is assigned to company</li>
+<li><strong>Middleware Logic</strong>: Check pricing feed import logs for catalog assignment</li>
+<li><strong>API Logic</strong>: Review Pricing API code for priority order</li>
+<li><strong>Database Query</strong>: Check which pricing type exists for variant/company</li>
+</ol>
+<hr>
+<h2 id="technical-reference">Technical Reference</h2>
+<h3 id="database-schema">Database Schema</h3>
+<h4 id="contract-pricing-table">Contract Pricing Table</h4>
+<pre><code class="language-sql">contract_pricing
+<ul>
+<li>contract_pricing_id (PK)</li>
+<li>brand_id (OneSource, Winzer, FastServ)</li>
+<li>contract_id (Company external ID)</li>
+<li>shopify_product_id</li>
+<li>shopify_variant_id</li>
+<li>contract_price (decimal)</li>
+<li>utc_created_at</li>
+<li>utc_updated_at</li>
+</ul>
+</code></pre>
+<h4 id="last-purchase-pricing-table">Last Purchase Pricing Table</h4>
+<pre><code class="language-sql">last_purchase_pricing
+<ul>
+<li>last_purchase_pricing_id (PK)</li>
+<li>brand_id</li>
+<li>shopify_company_id</li>
+<li>shopify_product_id</li>
+<li>shopify_variant_id</li>
+<li>last_purchase_price (decimal)</li>
+<li>utc_created_at</li>
+<li>utc_updated_at</li>
+</ul>
+</code></pre>
+<h4 id="template-pricing-table">Template Pricing Table</h4>
+<pre><code class="language-sql">template_pricing
+<ul>
+<li>template_pricing_id (PK)</li>
+<li>brand_id</li>
+<li>template_name (FRANCHISE, LOW_MRO, etc.)</li>
+<li>shopify_product_id</li>
+<li>shopify_variant_id</li>
+<li>template_price (decimal)</li>
+<li>utc_created_at</li>
+<li>utc_updated_at</li>
+</ul>
+</code></pre>
+<h4 id="bulk-pricing-table">Bulk Pricing Table</h4>
+<pre><code class="language-sql">bulk_pricing
+<ul>
+<li>bulk_pricing_id (PK)</li>
+<li>brand_id</li>
+<li>shopify_variant_id</li>
+<li>quantity</li>
+<li>price (decimal)</li>
+<li>utc_created_at</li>
+<li>utc_updated_at</li>
+</ul>
+</code></pre>
+<h3 id="code-locations">Code Locations</h3>
+<strong>Middleware:</strong>
+<ul>
+<li><code>code/winzer-middleware/src/Winzer.Impl/PricingFeedService.cs</code> - Pricing import logic</li>
+<li><code>code/winzer-middleware/Winzer.Core/Services/ContractPricingService.cs</code></li>
+<li><code>code/winzer-middleware/Winzer.Core/Services/LastPurchasePricingService.cs</code></li>
+<li><code>code/winzer-middleware/Winzer.Core/Services/TemplatePricingService.cs</code></li>
+<li><code>code/winzer-middleware/Winzer.Core/Services/BulkPricingService.cs</code></li>
+</ul>
+<strong>Frontend:</strong>
+<ul>
+<li><code>code/winzer-main/sites/_shared/sections/main-product.liquid</code> - PDP pricing display</li>
+<li><code>code/winzer-main/sites/_shared/snippets/price.liquid</code> - Price rendering</li>
+<li><code>code/winzer-main/sites/_shared/snippets/exact-pricing.liquid</code> - Exact pricing link</li>
+<li><code>code/winzer-main/sites/_shared/assets/global.js</code> - Pricing JavaScript</li>
+<li><code>code/winzer-main/sites/_shared/assets/four-decimal-pricing.js</code> - Exact pricing integration</li>
+<li><code>code/winzer-main/searchspring/winzer/src/components/ResultVariantRow/ResultVariantRow.js</code> - PLP pricing</li>
+</ul>
+<h3 id="pricing-feed-import-process">Pricing Feed Import Process</h3>
+<strong>OneSource:</strong>
+<ol>
+<li>CSV file downloaded from SFTP</li>
+<li>Template pricing extracted</li>
+<li>Bulk pricing extracted</li>
+<li>Prices rounded to nearest cent</li>
+<li>Shopify variant prices updated</li>
+<li>Bulk pricing stored in database</li>
+</ol>
+<strong>Winzer & FastServ:</strong>
+<ol>
+<li>CSV file downloaded from SFTP</li>
+<li>Pricing type determined (contract, last purchase, template)</li>
+<li>Pricing stored in appropriate database table</li>
+<li>Shopify catalogs created/updated</li>
+<li>Prices rounded to nearest cent</li>
+<li>Catalogs assigned to company locations</li>
+</ol>
+<strong>Priority Logic:</strong>
+<ul>
+<li>Contract pricing → Last purchase pricing → Template pricing</li>
+<li>Middleware prevents duplicate catalog entries</li>
+<li>Contract catalogs take precedence over last purchase catalogs</li>
+</ul>
+<hr>
+<strong>Last Updated</strong>: 2025-01-XX  
+<strong>Maintained By</strong>: CQL Corp / Arcadia Digital  
+<strong>Related Documentation</strong>: 
+<ul>
+<li><code>HANDOFF.md</code> - Quick start guide</li>
+<li><code>winzer-documentation.md</code> - Complete platform documentation</li>
+<li><code>winzer-middleware-documentation.md</code> - Middleware system details</li>
+</ul>
+                </div>
+            </main>
+        </div>
+    </div>
+</body>
+</html>

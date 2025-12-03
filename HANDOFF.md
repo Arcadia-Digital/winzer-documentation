@@ -39,6 +39,7 @@
 - **`RELEASE_NOTES.md`** - What changed during handoff, known issues, next steps
 - **`DEVELOPER_HANDOFF.md`** - Architecture overview, platform structure, development setup
 - **`DEPLOYMENT.md`** - GitHub Pages deployment guide
+- **`winzer-pricing-documentation.md`** - Complete pricing system documentation (display rules, priority order, troubleshooting)
 
 ### AI-Specific Documentation
 - **`AI_ONBOARDING_CONTEXT.md`** - Project history, investigation summaries, technical context for AI agents
@@ -55,6 +56,7 @@
 - **`index.html`** - Documentation hub (open locally or view on GitHub Pages)
 - **`winzer-documentation.html`** - Complete platform documentation (storefront, content, products, operations)
 - **`winzer-middleware-documentation.html`** - AWS middleware system documentation
+- **`winzer-pricing-documentation.html`** - Pricing system documentation (OneSource, Winzer, FastServ)
 - **`winzer-product-data-map.html`** - Oracle PIM to Shopify field mapping
 - **`winzer-searchspring-documentation.html`** - SearchSpring configuration guide
 - **`winzer-shipperhq-documentation.html`** - ShipperHQ shipping rules
@@ -212,6 +214,20 @@ See `RELEASE_NOTES.md` for complete details. Summary:
 - **Live Documentation**: https://petebuzzell-ad.github.io/winzer-documentation/
 - **Repository**: https://github.com/petebuzzell-ad/winzer-documentation
 - **Platform Docs**: Open `index.html` locally or view on GitHub Pages
+
+---
+
+## 💰 Pricing Display Logic
+
+**See `winzer-pricing-documentation.md` for complete pricing system documentation.**
+
+**Quick Reference:**
+- **OneSource**: Bulk pricing with quantity breaks, template pricing in Shopify catalogs
+- **Winzer & FastServ**: B2B pricing with exact 4-decimal precision, contract/last purchase/template pricing priority
+- **Price Priority** (Winzer/FastServ): Contract → Last Purchase → Template → Base Shopify Price
+- **Key Difference**: OneSource uses catalogs for template pricing; Winzer/FastServ use API for template pricing
+
+For detailed pricing rules, troubleshooting, and implementation details, see the dedicated pricing documentation.
 
 ---
 
